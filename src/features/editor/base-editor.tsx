@@ -23,7 +23,7 @@ export function BaseEditor() {
   };
 
   return (
-    <div className='py-8'>
+    <div>
       <LexicalComposer initialConfig={initialConfig}>
         <ToolbarPlugin />
         <RichTextPlugin

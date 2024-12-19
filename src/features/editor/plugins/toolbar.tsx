@@ -23,12 +23,9 @@ import {
   AlignLeft,
   AlignRight,
   Baseline,
-  Bold,
   ChevronDown,
-  CodeXml,
   Ellipsis,
   Image,
-  Italic,
   Keyboard,
   Link,
   List,
@@ -36,69 +33,28 @@ import {
   ListOrdered,
   ListTodo,
   PaintBucket,
-  Strikethrough,
   Subscript,
   Superscript,
   Table,
-  Underline,
 } from 'lucide-react';
 import React from 'react';
 import { useToolbarStore } from '../store/toolbar-context';
 import { ToolbarButton, ToolbarGroup } from '../ui/toolbar';
 import { getSelectedNode } from '../utils/get-selected-node';
-import '@rc-component/color-picker/assets/index.css';
 import { RedoPlugin } from './redo-action';
 import { ColorPicker } from './test/color-picker';
+import { TextBoldPlugin } from './text-bold';
+import { TextCodePlugin } from './text-code';
+import { TextItalicPlugin } from './text-italic';
+import { TextStrikethroughPlugin } from './text-strikethrough';
+import { TextUnderlinePlugin } from './text-underline';
 import { UndoPlugin } from './undo-action';
 
 const LowPriority = 1;
 
 export function ToolbarPlugin() {
-  return (
-    <div className='flex items-center justify-start border-b h-10 mb-6'>
-      <ToolbarGroup>
-        <UndoPlugin />
-        <RedoPlugin />
-      </ToolbarGroup>
-
-      <ToolbarGroup>
-        <ToolbarButton type='button' className='min-w-28'>
-          Normal text <ChevronDown className='ml-auto' size={14} />
-        </ToolbarButton>
-      </ToolbarGroup>
-
-      <InlineToolbarItems />
-
-      <ListToolbarItems />
-
-      <ToolbarGroup>
-        <ToolbarButton type='button'>
-          <Link size={14} />
-        </ToolbarButton>
-        <TextAlignToolbar />
-        <ToolbarButton type='button' className='gap-1'>
-          <Table size={14} /> <ChevronDown size={14} />
-        </ToolbarButton>
-        <ToolbarButton type='button' className='gap-1'>
-          <Image size={14} /> <ChevronDown size={14} />
-        </ToolbarButton>
-      </ToolbarGroup>
-
-      <MoreToolbarItems />
-    </div>
-  );
-}
-
-function InlineToolbarItems() {
   const [editor] = useLexicalComposerContext();
   const updateToolbar = useToolbarStore((state) => state.updateToolbar);
-
-  const isBold = useToolbarStore((state) => state.isBold);
-  const isItalic = useToolbarStore((state) => state.isItalic);
-  const isUnderline = useToolbarStore((state) => state.isUnderline);
-  const isStrikethrough = useToolbarStore((state) => state.isStrikethrough);
-  const isCode = useToolbarStore((state) => state.isCode);
-  const bgColor = useToolbarStore((state) => state.bgColor);
 
   const $updateToolbar = React.useCallback(() => {
     const selection = $getSelection();
@@ -174,57 +130,51 @@ function InlineToolbarItems() {
   }, [editor, $updateToolbar, updateToolbar]);
 
   return (
+    <div className='flex items-center justify-start border-b h-10 mb-6'>
+      <ToolbarGroup>
+        <UndoPlugin />
+        <RedoPlugin />
+      </ToolbarGroup>
+
+      <ToolbarGroup>
+        <ToolbarButton type='button' className='min-w-28'>
+          Normal text <ChevronDown className='ml-auto' size={14} />
+        </ToolbarButton>
+      </ToolbarGroup>
+
+      <ToolbarGroup>
+        <TextBoldPlugin />
+        <TextItalicPlugin />
+        <TextUnderlinePlugin />
+        <TextStrikethroughPlugin />
+        <TextCodePlugin />
+      </ToolbarGroup>
+
+      <ListToolbarItems />
+
+      <ToolbarGroup>
+        <ToolbarButton type='button'>
+          <Link size={14} />
+        </ToolbarButton>
+        <TextAlignToolbar />
+        <ToolbarButton type='button' className='gap-1'>
+          <Table size={14} /> <ChevronDown size={14} />
+        </ToolbarButton>
+        <ToolbarButton type='button' className='gap-1'>
+          <Image size={14} /> <ChevronDown size={14} />
+        </ToolbarButton>
+      </ToolbarGroup>
+
+      <MoreToolbarItems />
+    </div>
+  );
+}
+
+function InlineToolbarItems() {
+  const bgColor = useToolbarStore((state) => state.bgColor);
+
+  return (
     <ToolbarGroup>
-      <ToolbarButton
-        type='button'
-        onClick={() => {
-          editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold');
-        }}
-        data-state={isBold ? 'active' : 'inactive'}
-        aria-label='Format Bold'
-      >
-        <Bold size={14} />
-      </ToolbarButton>
-      <ToolbarButton
-        type='button'
-        onClick={() => {
-          editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic');
-        }}
-        data-state={isItalic ? 'active' : 'inactive'}
-        aria-label='Format Italic'
-      >
-        <Italic size={14} />
-      </ToolbarButton>
-      <ToolbarButton
-        type='button'
-        onClick={() => {
-          editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline');
-        }}
-        data-state={isUnderline ? 'active' : 'inactive'}
-        aria-label='Format Underline'
-      >
-        <Underline size={14} />
-      </ToolbarButton>
-      <ToolbarButton
-        type='button'
-        onClick={() => {
-          editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough');
-        }}
-        data-state={isStrikethrough ? 'active' : 'inactive'}
-        aria-label='Format Strikethrough'
-      >
-        <Strikethrough size={14} />
-      </ToolbarButton>
-      <ToolbarButton
-        type='button'
-        onClick={() => {
-          editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'code');
-        }}
-        data-state={isCode ? 'active' : 'inactive'}
-        aria-label='Format Code'
-      >
-        <CodeXml size={14} />
-      </ToolbarButton>
       <FontColorPicker />
       <ToolbarButton type='button' onClick={() => console.log('bgColor: ', bgColor)}>
         <PaintBucket size={14} />

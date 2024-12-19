@@ -15,11 +15,3 @@
     rgb(255, 0, 0)
   );
 }
-
-.color-picker-alpha {
-  background-image: linear-gradient(
-    to right,
-    transparent,
-    rgb(0, 0, 0)
-  );
-}

@@ -1,10 +1,11 @@
 import './color-picker.css';
 
 import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
 import { calculateZoomLevel } from '@lexical/utils';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type React from 'react';
-import { clamp, transformColor } from '../../utils/color';
+import React from 'react';
+import { clamp, opaque, transformAlpha, transformColor } from '../../utils/color';
 
 let skipAddingToHistoryStack = false;
 
@@ -60,7 +61,7 @@ const HUE_OFFSET = 8;
 
 export function ColorPicker({ color, onChange }: Readonly<ColorPickerProps>): JSX.Element {
   const [selfColor, setSelfColor] = useState(transformColor('hex', color));
-  const [selfAlpha, setSelfAlpha] = useState(100);
+  const [selfAlpha, setSelfAlpha] = useState(transformAlpha(color));
   const [inputColor, setInputColor] = useState(color);
   const innerDivRef = useRef(null);
 
@@ -108,7 +109,6 @@ export function ColorPicker({ color, onChange }: Readonly<ColorPickerProps>): JS
   const onMoveHue = ({ x }: Position) => {
     const newHsv = { ...selfColor.hsv, h: (x / (SLIDER_WIDTH - HUE_OFFSET)) * 360 };
     const newColor = transformColor('hsv', newHsv);
-    console.log('New color: ', newColor);
 
     setSelfColor(newColor);
     setInputColor(newColor.hex);
@@ -116,7 +116,6 @@ export function ColorPicker({ color, onChange }: Readonly<ColorPickerProps>): JS
 
   const onMoveAlpha = ({ x }: Position) => {
     const alpha = Math.round((x / (SLIDER_WIDTH - HUE_OFFSET)) * 100);
-    console.log('Alpha: ', alpha);
     setSelfAlpha(alpha);
   };
 
@@ -163,25 +162,59 @@ export function ColorPicker({ color, onChange }: Readonly<ColorPickerProps>): JS
               }}
             />
           </MoveWrapper>
-          <MoveWrapper className='color-picker-alpha select-none w-full relative h-3' offset={HUE_OFFSET} onChange={onMoveAlpha}>
-            <div
-              className='absolute w-1.5 bg-white h-2.5 translate-x-px translate-y-px shadow'
-              style={{
-                left: Math.max(0, alphaPosition.x - HUE_OFFSET),
-              }}
-            />
+          <MoveWrapper
+            style={{
+              backgroundImage:
+                'url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAADFJREFUOE9jZGBgEGHAD97gk2YcNYBhmIQBgWSAP52AwoAQwJvQRg1gACckQoC2gQgAIF8IscwEtKYAAAAASUVORK5CYII=")',
+            }}
+            className='select-none w-full relative h-3 bg-[left_center]'
+            offset={HUE_OFFSET}
+            onChange={onMoveAlpha}
+          >
+            <React.Fragment>
+              <div
+                className='absolute w-1.5 bg-white h-2.5 translate-x-px translate-y-px shadow z-20'
+                style={{
+                  left: Math.max(0, alphaPosition.x - HUE_OFFSET),
+                }}
+              />
+              <div style={{ backgroundImage: `linear-gradient(to right, transparent, ${selfColor.hex})` }} className='absolute select-none inset-0' />
+            </React.Fragment>
           </MoveWrapper>
         </div>
-        <div className='w-[30px]'>
-          <div className='size-[30px] rounded-[2px] shadow' style={{ backgroundColor: selfColor.hex }} />
+        <div className='w-[30px] relative'>
+          <div className='size-[30px] rounded-[2px] relative z-20 shadow' style={{ backgroundColor: `${selfColor.hex}${opaque[selfAlpha]}` }} />
+          <div
+            style={{
+              backgroundImage:
+                'url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAADFJREFUOE9jZGBgEGHAD97gk2YcNYBhmIQBgWSAP52AwoAQwJvQRg1gACckQoC2gQgAIF8IscwEtKYAAAAASUVORK5CYII=")',
+            }}
+            className='size-[30px] rounded-[2px] absolute inset-0 z-10'
+          />
         </div>
       </div>
 
-      <div className='py-3 flex items-center justify-start gap-2.5'>
-        <p className='text-xs'>Hex</p>
-        <Input className='p-0 h-6 px-2 text-[11px] rounded-none' onChange={(e) => onSetHex(e.target.value)} value={inputColor} />
+      <div className='py-3 flex items-center justify-start'>
+        <p className='text-xs mr-2.5'>Hex</p>
+        <Input
+          className='p-0 h-6 px-2 rounded-none rounded-l-md flex-grow focus-visible:ring-0'
+          onChange={(e) => onSetHex(e.target.value)}
+          value={inputColor}
+        />
+        <div className='relative w-24'>
+          <Input
+            type='number'
+            min={0}
+            max={100}
+            className='p-0 h-6 pl-2 pr-5 rounded-none rounded-r-md border-l-transparent w-full tabular-nums text-right focus-visible:ring-0'
+            onChange={(e) => setSelfAlpha(Number(e.target.value))}
+            value={selfAlpha}
+          />
+          <span className='absolute right-2 top-[3px] text-sm'>%</span>
+        </div>
       </div>
-      <div className='flex flex-wrap gap-1.5 justify-between'>
+      <Separator />
+      <div className='flex flex-wrap gap-1.5 justify-between pt-3'>
         {basicColors.map((basicColor, index) => (
           <button
             type='button'

@@ -13,13 +13,14 @@ import {
   type LexicalNode,
   SELECTION_CHANGE_COMMAND,
 } from 'lexical';
-import { ChevronDown, Ellipsis, Image, List, ListCollapse, ListOrdered, ListTodo } from 'lucide-react';
+import { ChevronDown, Ellipsis, List, ListCollapse, ListOrdered, ListTodo } from 'lucide-react';
 import React from 'react';
 import { useToolbarStore } from '../store/toolbar-context';
 import { ToolbarButton, ToolbarGroup } from '../ui/toolbar';
 import { getSelectedNode } from '../utils/get-selected-node';
 import { BgColorPlugin } from './bg-color';
 import { FontColorPlugin } from './font-color';
+import { ImagePlugin } from './image';
 import { LinkPlugin } from './link';
 import { RedoPlugin } from './redo-action';
 import { TablePlugin } from './table';
@@ -142,9 +143,7 @@ export function ToolbarPlugin() {
         <LinkPlugin />
         <TextAlignPlugin />
         <TablePlugin />
-        <ToolbarButton type='button' className='gap-1'>
-          <Image size={14} /> <ChevronDown size={14} />
-        </ToolbarButton>
+        <ImagePlugin />
       </ToolbarGroup>
 
       <ToolbarGroup className='border-r-0'>

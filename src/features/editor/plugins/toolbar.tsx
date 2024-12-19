@@ -15,9 +15,7 @@ import {
   FORMAT_ELEMENT_COMMAND,
   FORMAT_TEXT_COMMAND,
   type LexicalNode,
-  REDO_COMMAND,
   SELECTION_CHANGE_COMMAND,
-  UNDO_COMMAND,
 } from 'lexical';
 import {
   AlignCenter,
@@ -38,29 +36,30 @@ import {
   ListOrdered,
   ListTodo,
   PaintBucket,
-  Redo2,
   Strikethrough,
   Subscript,
   Superscript,
   Table,
   Underline,
-  Undo2,
 } from 'lucide-react';
 import React from 'react';
 import { useToolbarStore } from '../store/toolbar-context';
 import { ToolbarButton, ToolbarGroup } from '../ui/toolbar';
 import { getSelectedNode } from '../utils/get-selected-node';
 import '@rc-component/color-picker/assets/index.css';
+import { RedoPlugin } from './redo-action';
 import { ColorPicker } from './test/color-picker';
+import { UndoPlugin } from './undo-action';
 
 const LowPriority = 1;
 
 export function ToolbarPlugin() {
-  console.log('ToolbarPlugin');
-
   return (
     <div className='flex items-center justify-start border-b h-10 mb-6'>
-      <UndoRedoItems />
+      <ToolbarGroup>
+        <UndoPlugin />
+        <RedoPlugin />
+      </ToolbarGroup>
 
       <ToolbarGroup>
         <ToolbarButton type='button' className='min-w-28'>
@@ -87,35 +86,6 @@ export function ToolbarPlugin() {
 
       <MoreToolbarItems />
     </div>
-  );
-}
-
-function UndoRedoItems() {
-  const [editor] = useLexicalComposerContext();
-  const canUndo = useToolbarStore((state) => state.canUndo);
-  const canRedo = useToolbarStore((state) => state.canRedo);
-
-  return (
-    <ToolbarGroup>
-      <ToolbarButton
-        type='button'
-        onClick={() => {
-          editor.dispatchCommand(UNDO_COMMAND, undefined);
-        }}
-        disabled={!canUndo}
-      >
-        <Undo2 size={14} />
-      </ToolbarButton>
-      <ToolbarButton
-        type='button'
-        onClick={() => {
-          editor.dispatchCommand(REDO_COMMAND, undefined);
-        }}
-        disabled={!canRedo}
-      >
-        <Redo2 size={14} />
-      </ToolbarButton>
-    </ToolbarGroup>
   );
 }
 

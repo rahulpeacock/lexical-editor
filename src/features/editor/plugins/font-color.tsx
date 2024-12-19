@@ -16,7 +16,7 @@ export function FontColorPlugin() {
           </ToolbarButton>
         </PopoverTrigger>
         <PopoverContent className='p-3 w-max'>
-          <ColorPicker color='#121212' onChange={(value) => console.log(value)} />
+          <ColorPicker color='#121212' onChange={(value) => console.log(value, fontColor)} />
         </PopoverContent>
       </Popover>
     </div>

@@ -13,7 +13,7 @@ import {
   type LexicalNode,
   SELECTION_CHANGE_COMMAND,
 } from 'lexical';
-import { ChevronDown, Ellipsis, List, ListCollapse, ListOrdered, ListTodo } from 'lucide-react';
+import { ChevronDown, Ellipsis } from 'lucide-react';
 import React from 'react';
 import { useToolbarStore } from '../store/toolbar-context';
 import { ToolbarButton, ToolbarGroup } from '../ui/toolbar';
@@ -22,6 +22,7 @@ import { BgColorPlugin } from './bg-color';
 import { FontColorPlugin } from './font-color';
 import { ImagePlugin } from './image';
 import { LinkPlugin } from './link';
+import { NumberList } from './number-list';
 import { RedoPlugin } from './redo-action';
 import { TablePlugin } from './table';
 import { TextAlignPlugin } from './text-align';
@@ -33,7 +34,10 @@ import { TextStrikethroughPlugin } from './text-strikethrough';
 import { TextSubscriptPlugin } from './text-subscript';
 import { TextSuperscriptPlugin } from './text-superscript';
 import { TextUnderlinePlugin } from './text-underline';
+import { TodoList } from './todo-list';
+import { ToggleList } from './toggle-list';
 import { UndoPlugin } from './undo-action';
+import { UnorderedList } from './unordered-list';
 
 const LowPriority = 1;
 
@@ -154,27 +158,12 @@ export function ToolbarPlugin() {
 }
 
 function ListToolbarItems() {
-  const [editor] = useLexicalComposerContext();
-
   return (
     <ToolbarGroup>
-      <ToolbarButton
-        type='button'
-        onClick={() => {
-          editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
-        }}
-      >
-        <List size={14} />
-      </ToolbarButton>
-      <ToolbarButton type='button'>
-        <ListOrdered size={14} />
-      </ToolbarButton>
-      <ToolbarButton type='button'>
-        <ListTodo size={14} />
-      </ToolbarButton>
-      <ToolbarButton type='button'>
-        <ListCollapse size={14} />
-      </ToolbarButton>
+      <UnorderedList />
+      <NumberList />
+      <TodoList />
+      <ToggleList />
     </ToolbarGroup>
   );
 }

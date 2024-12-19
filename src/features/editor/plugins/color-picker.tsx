@@ -5,7 +5,7 @@ import { Separator } from '@/components/ui/separator';
 import { calculateZoomLevel } from '@lexical/utils';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import React from 'react';
-import { clamp, opaque, transformAlpha, transformColor } from '../../utils/color';
+import { clamp, transformAlpha, transformColor, transformOpaque } from '../utils/color';
 
 let skipAddingToHistoryStack = false;
 
@@ -61,7 +61,7 @@ const HUE_OFFSET = 8;
 
 export function ColorPicker({ color, onChange }: Readonly<ColorPickerProps>): JSX.Element {
   const [selfColor, setSelfColor] = useState(transformColor('hex', color));
-  const [selfAlpha, setSelfAlpha] = useState(transformAlpha(color));
+  const [selfAlpha, setSelfAlpha] = useState(transformOpaque(color));
   const [inputColor, setInputColor] = useState(color);
   const innerDivRef = useRef(null);
 
@@ -82,7 +82,7 @@ export function ColorPicker({ color, onChange }: Readonly<ColorPickerProps>): JS
 
   const alphaPosition = useMemo(
     () => ({
-      x: (selfAlpha / 100) * SLIDER_WIDTH,
+      x: (selfAlpha.alpha / 100) * SLIDER_WIDTH,
     }),
     [selfAlpha],
   );
@@ -116,7 +116,8 @@ export function ColorPicker({ color, onChange }: Readonly<ColorPickerProps>): JS
 
   const onMoveAlpha = ({ x }: Position) => {
     const alpha = Math.round((x / (SLIDER_WIDTH - HUE_OFFSET)) * 100);
-    setSelfAlpha(alpha);
+    const newAlpha = transformAlpha(alpha);
+    setSelfAlpha(newAlpha);
   };
 
   useEffect(() => {
@@ -183,7 +184,7 @@ export function ColorPicker({ color, onChange }: Readonly<ColorPickerProps>): JS
           </MoveWrapper>
         </div>
         <div className='w-[30px] relative'>
-          <div className='size-[30px] rounded-[2px] relative z-20 shadow' style={{ backgroundColor: `${selfColor.hex}${opaque[selfAlpha]}` }} />
+          <div className='size-[30px] rounded-[2px] relative z-20 shadow' style={{ backgroundColor: `${selfColor.hex}${selfAlpha.opaque}` }} />
           <div
             style={{
               backgroundImage:
@@ -207,8 +208,8 @@ export function ColorPicker({ color, onChange }: Readonly<ColorPickerProps>): JS
             min={0}
             max={100}
             className='p-0 h-6 pl-2 pr-5 rounded-none rounded-r-md border-l-transparent w-full tabular-nums text-right focus-visible:ring-0'
-            onChange={(e) => setSelfAlpha(Number(e.target.value))}
-            value={selfAlpha}
+            onChange={(e) => setSelfAlpha(transformAlpha(Number(e.target.value)))}
+            value={selfAlpha.alpha}
           />
           <span className='absolute right-2 top-[3px] text-sm'>%</span>
         </div>

@@ -2,7 +2,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Baseline } from 'lucide-react';
 import { useToolbarStore } from '../store/toolbar-context';
 import { ToolbarButton } from '../ui/toolbar';
-import { ColorPicker } from './test/color-picker';
+import { ColorPicker } from './color-picker';
 
 export function FontColorPlugin() {
   const fontColor = useToolbarStore((state) => state.fontColor);

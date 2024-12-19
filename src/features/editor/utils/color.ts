@@ -127,11 +127,20 @@ export function transformColor<M extends keyof Color, C extends Color[M]>(format
   return { hex, hsv, rgb };
 }
 
-export function transformAlpha(hex: string): number {
+type Alpha = {
+  alpha: number;
+  opaque: string;
+};
+
+export function transformOpaque(hex: string): Alpha {
   if (hex.length === 9) {
-    return opaque.indexOf(hex.slice(7)) + 1;
+    return { alpha: opaque.indexOf(hex.slice(7)), opaque: hex.slice(7) };
   }
-  return 100;
+  return { alpha: 100, opaque: 'FF' };
+}
+
+export function transformAlpha(alpha: number): Alpha {
+  return { alpha, opaque: opaque[alpha] };
 }
 
 export const opaque = [

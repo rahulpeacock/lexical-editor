@@ -10,33 +10,20 @@ import {
   CAN_REDO_COMMAND,
   CAN_UNDO_COMMAND,
   COMMAND_PRIORITY_CRITICAL,
-  type ElementFormatType,
-  FORMAT_ELEMENT_COMMAND,
   type LexicalNode,
   SELECTION_CHANGE_COMMAND,
 } from 'lexical';
-import {
-  AlignCenter,
-  AlignJustify,
-  AlignLeft,
-  AlignRight,
-  ChevronDown,
-  Ellipsis,
-  Image,
-  Link,
-  List,
-  ListCollapse,
-  ListOrdered,
-  ListTodo,
-  Table,
-} from 'lucide-react';
+import { ChevronDown, Ellipsis, Image, List, ListCollapse, ListOrdered, ListTodo } from 'lucide-react';
 import React from 'react';
 import { useToolbarStore } from '../store/toolbar-context';
 import { ToolbarButton, ToolbarGroup } from '../ui/toolbar';
 import { getSelectedNode } from '../utils/get-selected-node';
 import { BgColorPlugin } from './bg-color';
 import { FontColorPlugin } from './font-color';
+import { LinkPlugin } from './link';
 import { RedoPlugin } from './redo-action';
+import { TablePlugin } from './table';
+import { TextAlignPlugin } from './text-align';
 import { TextBoldPlugin } from './text-bold';
 import { TextCodePlugin } from './text-code';
 import { TextItalicPlugin } from './text-italic';
@@ -152,13 +139,9 @@ export function ToolbarPlugin() {
       <ListToolbarItems />
 
       <ToolbarGroup>
-        <ToolbarButton type='button'>
-          <Link size={14} />
-        </ToolbarButton>
-        <TextAlignToolbar />
-        <ToolbarButton type='button' className='gap-1'>
-          <Table size={14} /> <ChevronDown size={14} />
-        </ToolbarButton>
+        <LinkPlugin />
+        <TextAlignPlugin />
+        <TablePlugin />
         <ToolbarButton type='button' className='gap-1'>
           <Image size={14} /> <ChevronDown size={14} />
         </ToolbarButton>
@@ -194,73 +177,6 @@ function ListToolbarItems() {
         <ListCollapse size={14} />
       </ToolbarButton>
     </ToolbarGroup>
-  );
-}
-
-const TextFormatIcons: Record<ElementFormatType, JSX.Element> = {
-  left: <AlignLeft size={14} />,
-  center: <AlignCenter size={14} />,
-  right: <AlignRight size={14} />,
-  justify: <AlignJustify size={14} />,
-  start: <AlignLeft size={14} />,
-  end: <AlignRight size={14} />,
-  '': <AlignLeft size={14} />,
-};
-
-function TextAlignToolbar() {
-  const [editor] = useLexicalComposerContext();
-  const textAlign = useToolbarStore((state) => state.textAlign);
-
-  return (
-    <div>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <ToolbarButton type='button' className='gap-1'>
-            {TextFormatIcons[textAlign]} <ChevronDown size={14} />
-          </ToolbarButton>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent
-          className='min-w-max'
-          onCloseAutoFocus={(e) => {
-            e.preventDefault();
-            editor.focus();
-          }}
-        >
-          <DropdownMenuItem
-            className='hover:cursor-pointer'
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'left');
-            }}
-          >
-            <AlignLeft size={14} />
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            className='hover:cursor-pointer'
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'center');
-            }}
-          >
-            <AlignCenter size={14} />
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            className='hover:cursor-pointer'
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'right');
-            }}
-          >
-            <AlignRight size={14} />
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            className='hover:cursor-pointer'
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'justify');
-            }}
-          >
-            <AlignJustify size={14} />
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
   );
 }
 

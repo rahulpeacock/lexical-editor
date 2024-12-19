@@ -1,4 +1,5 @@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { INSERT_UNORDERED_LIST_COMMAND, insertList } from '@lexical/list';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $findMatchingParent, mergeRegister } from '@lexical/utils';
@@ -49,6 +50,8 @@ import React from 'react';
 import { useToolbarStore } from '../store/toolbar-context';
 import { ToolbarButton, ToolbarGroup } from '../ui/toolbar';
 import { getSelectedNode } from '../utils/get-selected-node';
+import '@rc-component/color-picker/assets/index.css';
+import { ColorPicker } from './test/color-picker';
 
 const LowPriority = 1;
 
@@ -125,6 +128,7 @@ function InlineToolbarItems() {
   const isUnderline = useToolbarStore((state) => state.isUnderline);
   const isStrikethrough = useToolbarStore((state) => state.isStrikethrough);
   const isCode = useToolbarStore((state) => state.isCode);
+  const bgColor = useToolbarStore((state) => state.bgColor);
 
   const $updateToolbar = React.useCallback(() => {
     const selection = $getSelection();
@@ -251,23 +255,30 @@ function InlineToolbarItems() {
       >
         <CodeXml size={14} />
       </ToolbarButton>
-      <ToolbarButton
-        type='button'
-        onClick={() => {
-          editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'subscript');
-        }}
-      >
-        <Baseline size={14} />
-      </ToolbarButton>
-      <ToolbarButton
-        type='button'
-        onClick={() => {
-          editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'superscript');
-        }}
-      >
+      <FontColorPicker />
+      <ToolbarButton type='button' onClick={() => console.log('bgColor: ', bgColor)}>
         <PaintBucket size={14} />
       </ToolbarButton>
     </ToolbarGroup>
+  );
+}
+
+function FontColorPicker() {
+  const fontColor = useToolbarStore((state) => state.fontColor);
+
+  return (
+    <div>
+      <Popover>
+        <PopoverTrigger asChild>
+          <ToolbarButton type='button' onClick={() => console.log('fontColor: ', fontColor)}>
+            <Baseline size={14} />
+          </ToolbarButton>
+        </PopoverTrigger>
+        <PopoverContent className='p-3 w-max'>
+          <ColorPicker color='#121212FF' onChange={(value) => console.log(value)} />
+        </PopoverContent>
+      </Popover>
+    </div>
   );
 }
 

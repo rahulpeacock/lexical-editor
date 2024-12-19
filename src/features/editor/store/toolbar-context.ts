@@ -7,6 +7,8 @@ type State = {
   isUnderline: boolean;
   isStrikethrough: boolean;
   isCode: boolean;
+  fontColor: string;
+  bgColor: string;
   textAlign: ElementFormatType;
   canUndo: boolean;
   canRedo: boolean;
@@ -22,6 +24,8 @@ export const useToolbarStore = create<State & Action>((set) => ({
   isUnderline: false,
   isStrikethrough: false,
   isCode: false,
+  fontColor: '#000',
+  bgColor: '#fff',
   textAlign: 'left',
   canUndo: false,
   canRedo: false,

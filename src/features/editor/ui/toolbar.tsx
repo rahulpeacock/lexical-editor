@@ -5,7 +5,6 @@ import React from 'react';
 interface ToolbarGroupProps extends React.ComponentPropsWithoutRef<'div'> {}
 
 export function ToolbarGroup({ className, ...props }: ToolbarGroupProps) {
-  console.log('ToolbarGroup');
   return <div className={cn('flex items-center justify-start gap-0.5 border-r p-2', className)} {...props} />;
 }
 

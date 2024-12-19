@@ -12,7 +12,6 @@ import {
   COMMAND_PRIORITY_CRITICAL,
   type ElementFormatType,
   FORMAT_ELEMENT_COMMAND,
-  FORMAT_TEXT_COMMAND,
   type LexicalNode,
   SELECTION_CHANGE_COMMAND,
 } from 'lexical';
@@ -24,14 +23,11 @@ import {
   ChevronDown,
   Ellipsis,
   Image,
-  Keyboard,
   Link,
   List,
   ListCollapse,
   ListOrdered,
   ListTodo,
-  Subscript,
-  Superscript,
   Table,
 } from 'lucide-react';
 import React from 'react';
@@ -44,7 +40,10 @@ import { RedoPlugin } from './redo-action';
 import { TextBoldPlugin } from './text-bold';
 import { TextCodePlugin } from './text-code';
 import { TextItalicPlugin } from './text-italic';
+import { TextKbdPlugin } from './text-kbd';
 import { TextStrikethroughPlugin } from './text-strikethrough';
+import { TextSubscriptPlugin } from './text-subscript';
+import { TextSuperscriptPlugin } from './text-superscript';
 import { TextUnderlinePlugin } from './text-underline';
 import { UndoPlugin } from './undo-action';
 
@@ -165,7 +164,9 @@ export function ToolbarPlugin() {
         </ToolbarButton>
       </ToolbarGroup>
 
-      <MoreToolbarItems />
+      <ToolbarGroup className='border-r-0'>
+        <MoreTools />
+      </ToolbarGroup>
     </div>
   );
 }
@@ -263,47 +264,34 @@ function TextAlignToolbar() {
   );
 }
 
-function MoreToolbarItems() {
+function MoreTools() {
   const [editor] = useLexicalComposerContext();
 
+  function handleCloseAutoFocus(e: Event) {
+    e.preventDefault();
+    editor.focus();
+  }
+
   return (
-    <ToolbarGroup className='border-r-0'>
-      <div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <ToolbarButton type='button'>
-              <Ellipsis size={14} />
-            </ToolbarButton>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            onCloseAutoFocus={(e) => {
-              e.preventDefault();
-              editor.focus();
-            }}
-            className='w-40'
-          >
-            <DropdownMenuItem>
-              <Keyboard size={14} /> Keyboard
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => {
-                editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'superscript');
-              }}
-            >
-              <Superscript size={14} />
-              Superscript
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => {
-                editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'subscript');
-              }}
-            >
-              <Subscript size={14} />
-              Subscript
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-    </ToolbarGroup>
+    <div>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <ToolbarButton type='button'>
+            <Ellipsis size={14} />
+          </ToolbarButton>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent onCloseAutoFocus={handleCloseAutoFocus} className='w-40'>
+          <DropdownMenuItem className='cursor-pointer w-full' asChild>
+            <TextKbdPlugin />
+          </DropdownMenuItem>
+          <DropdownMenuItem className='cursor-pointer w-full' asChild>
+            <TextSuperscriptPlugin />
+          </DropdownMenuItem>
+          <DropdownMenuItem className='cursor-pointer w-full' asChild>
+            <TextSubscriptPlugin />
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
   );
 }
